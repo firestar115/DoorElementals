@@ -3,7 +3,8 @@ import java.awt.Color;
 ArrayList<Elemental> elementals = new ArrayList<Elemental>();
 Door[][] levelDoors = new Door[][] {
   {
-    new Door(new Color(255, 0, 0), new Color(0, 255, 0))
+    new Door(new Color(255, 0, 0), new Color(0, 255, 0), new Color(255, 0, 255)),
+    new Door(new Color(255, 0, 0), new Color(0, 0, 255), new Color(255, 0, 255))
     }
   };
   int level = 1;
@@ -37,6 +38,12 @@ void mousePressed() {
   if (selectedElemental > uniqueElementals - 1) {
     selectedElemental = -1;
   }
+  if (level == 1 && mouseX > 100 && mouseX < 100 + squareSize && mouseY > 100 && mouseY < 100 + squareSize * 2) {
+    levelDoors[0][0].activate(inUse);
+  }
+  if (level == 1 && mouseX > 300 && mouseX < 300 + squareSize && mouseY > 100 && mouseY < 100 + squareSize * 2) {
+    levelDoors[0][1].activate(inUse);
+  }
 }
 
 void drawDoors() {
@@ -44,7 +51,7 @@ void drawDoors() {
   for (int i = 0; i < doors.length; i++) {
     Door door = doors[i];
     fill(door.getCombinedColor().getRed(), door.getCombinedColor().getGreen(), door.getCombinedColor().getBlue());
-    rect(100, 100, squareSize, squareSize * 2);
+    rect(i * 200 + 100, 100, squareSize, squareSize * 2);
   }
 }
 
@@ -132,18 +139,21 @@ class Door {
     return this.colors;
   }
   public Color getCombinedColor() {
-    int r = colors.get(0).getRed();
-    int g = colors.get(0).getGreen();
-    int b = colors.get(0).getBlue();
-    for (Color c : colors) {
-      r = (r + c.getRed()) / 2;
-      g = (g + c.getGreen()) / 2;
-      b = (b + c.getBlue()) / 2;
+    if (!colors.isEmpty()) {
+      int r = colors.get(0).getRed();
+      int g = colors.get(0).getGreen();
+      int b = colors.get(0).getBlue();
+      for (Color c : colors) {
+        r = (r + c.getRed()) / 2;
+        g = (g + c.getGreen()) / 2;
+        b = (b + c.getBlue()) / 2;
+      }
+      return new Color(r, g, b);
     }
-    return new Color(r, g, b);
+    return Color.BLACK;
   }
   public void activate(Elemental e) {
-    if(colors.contains(e.getColor())){
+    if (colors.contains(e.getColor())) {
       colors.remove(e.getColor());
       elementals.remove(e);
     }
